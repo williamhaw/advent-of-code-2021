@@ -11,4 +11,6 @@ object Solution {
     result.sum - 1
   }
 
+  def countIncreaseWithWindow(input: List[Int], window: Int) = countIncrease(input.sliding(window, 1).map(_.sum).toList)
+
 }

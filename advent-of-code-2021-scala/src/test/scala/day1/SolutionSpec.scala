@@ -10,6 +10,11 @@ object SolutionSpec extends DefaultRunnableSpec{
           for{
               lines <- ZFileReader.readLines("day-1-input-william.txt")(_.toInt)
           } yield assert(Solution.countIncrease(lines))(equalTo(1195))
+      },
+      test("countIncreaseWithWindow should get correct count"){
+          for{
+              lines <- ZFileReader.readLines("day-1-input-william.txt")(_.toInt)
+          } yield assert(Solution.countIncreaseWithWindow(lines, 3))(equalTo(1235))
       }
   )
 }

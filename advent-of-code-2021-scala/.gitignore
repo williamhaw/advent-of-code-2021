@@ -3,3 +3,7 @@ target/
 .idea/
 .metals/
 .vscode/
+**/.bloop
+metals.sbt
+project/metals.sbt
+.DS_Store

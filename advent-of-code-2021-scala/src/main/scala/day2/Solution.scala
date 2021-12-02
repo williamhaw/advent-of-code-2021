@@ -3,6 +3,7 @@ package day2
 object Solution {
 
   case class PositionDepth(horizontal: Int, depth: Int)
+  case class PositionDepthAim(horizontal: Int, depth: Int, aim: Int)
 
   sealed trait Command
   case class Forward(units: Int) extends Command
@@ -26,4 +27,10 @@ object Solution {
       }
     )
 
+    def findPositionWithAim(commands: List[Command]): PositionDepthAim =
+        commands.foldLeft(PositionDepthAim(0,0,0))((current: PositionDepthAim, c: Command) => c match {
+            case Forward(units) => current.copy(horizontal = current.horizontal + units, depth = current.depth + current.aim * units)
+            case Down(units) => current.copy(aim = current.aim + units)
+            case Up(units) => current.copy(aim = current.aim - units)
+        })
 }

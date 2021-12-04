@@ -105,6 +105,20 @@ object SolutionSpec extends DefaultRunnableSpec {
         boardLines <- ZFileReader.readLines("day-4-input-boards-william.txt")(parseBoardLines)
         boards = boardLinesToBoards(boardLines)
       } yield assert(playBingo(boards, numbers))(equalTo(31424))
+    },
+    test("playBingoWinLast should return correct score for test inputs") {
+      for {
+        numbers    <- ZFileReader.readLines("day4-test-numbers.txt")(parseNumbers).head
+        boardLines <- ZFileReader.readLines("day4-test-boards.txt")(parseBoardLines)
+        boards = boardLinesToBoards(boardLines)
+      } yield assert(playBingoWinLast(boards, numbers))(equalTo(1924))
+    },
+    test("playBingoWinLast should return correct score for real inputs") {
+      for {
+        numbers    <- ZFileReader.readLines("day-4-input-numbers-william.txt")(parseNumbers).head
+        boardLines <- ZFileReader.readLines("day-4-input-boards-william.txt")(parseBoardLines)
+        boards = boardLinesToBoards(boardLines)
+      } yield assert(playBingoWinLast(boards, numbers))(equalTo(23042))
     }
   )
 }

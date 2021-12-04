@@ -84,4 +84,36 @@ object Solution {
     helper(numbers, startingBoards)
   }
 
+  def playBingoWinLast(boards: Seq[List[List[Int]]], numbers: List[Int]): Int = {
+
+    @tailrec
+    def helper(
+        boards: Seq[List[List[Int]]],
+        remainingNumbers: List[Int],
+        marked: Seq[List[List[Int]]]
+    ): (Int, List[List[Int]], List[List[Int]]) = {
+      val currentDrawn = remainingNumbers.head
+      val newMarked = for ((b, boardIndex) <- boards.zipWithIndex) yield {
+        val m = marked(boardIndex)
+        markBoard(currentDrawn, b, m)
+      }
+      if (newMarked.exists(isWon)) {
+        val newBoards = boards.filterNot(isWon)
+        if (newBoards.size == 1) {
+          (currentDrawn, newBoards.head, newMarked.head)
+        } else {
+          val wonIndexes      = newMarked.zipWithIndex.filter { case (m, _) => isWon(m) }.map(_._2).toSet
+          val remainingBoards = boards.zipWithIndex.filter { case (_, i) => !wonIndexes.contains(i) }.map(_._1)
+          val remainingMarked = newMarked.zipWithIndex.filter { case (_, i) => !wonIndexes.contains(i) }.map(_._1)
+          helper(remainingBoards, remainingNumbers.tail, remainingMarked)
+        }
+      } else
+        helper(boards, remainingNumbers.tail, newMarked)
+    }
+
+    val startingBoards                      = for { _ <- 1 to boards.size } yield unmarkedBoard
+    val (lastNumber, lastBoard, lastMarked) = helper(boards, numbers, startingBoards)
+    getScore(lastNumber, lastBoard, lastMarked)
+  }
+
 }

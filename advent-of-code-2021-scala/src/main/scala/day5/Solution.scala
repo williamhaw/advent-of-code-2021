@@ -5,10 +5,10 @@ object Solution {
   case class Point(x: Int, y: Int)
   case class Segment(p1: Point, p2: Point)
 
-  def parseSegment(line: String): Segment = {
-    val points = line.split(" -> ").map(p => Point(p.split(",")(0).toInt, p.split(",")(1).toInt))
-    Segment(points(0), points(1))
-  }
+  def parseSegment(line: String): Segment =
+    line match {
+      case s"$x1,$y1 -> $x2,$y2" => Segment(Point(x1.toInt, y1.toInt), Point(x2.toInt, y2.toInt))
+    }
 
   def filterOnlyHorizontalAndVerticalSegments(input: List[Segment]): List[Segment] =
     input.filter(s => s.p1.x == s.p2.x || s.p1.y == s.p2.y)

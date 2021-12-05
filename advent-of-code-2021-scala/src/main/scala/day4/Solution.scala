@@ -4,116 +4,76 @@ import scala.annotation.tailrec
 
 object Solution {
 
-  val unmarkedBoard: List[List[Int]] = List(
-    List(0, 0, 0, 0, 0),
-    List(0, 0, 0, 0, 0),
-    List(0, 0, 0, 0, 0),
-    List(0, 0, 0, 0, 0),
-    List(0, 0, 0, 0, 0)
-  )
+  case class Entry(value: Int, isDrawn: Boolean)
 
   def parseNumbers(line: String): List[Int] = line.split(",").map(_.toInt).toList
 
-  def parseBoardLines(line: String): List[Int] = {
-    line match {
-      case "" => List.empty
-      case _  => line.strip().split("\\s+").map(_.toInt).toList
-    }
+  def parseBoardLinesToEntry(line: String): List[Entry] = line match {
+    case "" => List.empty
+    case _  => line.strip().split("\\s+").map(i => Entry(i.toInt, false)).toList
   }
 
-  def boardLinesToBoards(input: List[List[Int]]): Seq[List[List[Int]]] = input.filter(!_.isEmpty).grouped(5).toList
+  def boardLinesToBoards[T](input: List[List[T]]): Seq[List[List[T]]] = input.filter(!_.isEmpty).grouped(5).toList
 
-  def markBoard(drawnNumber: Int, board: List[List[Int]], prevMarked: List[List[Int]]): List[List[Int]] =
-    board.zipWithIndex.map { case (row, r) =>
-      row.zipWithIndex.map { case (element, c) =>
-        if (element == drawnNumber)
-          1
+  def markEntries(drawnNumber: Int, board: List[List[Entry]]) =
+    board.map { row =>
+      row.map { entry =>
+        if (entry.value == drawnNumber)
+          entry.copy(isDrawn = true)
         else
-          prevMarked(r)(c)
+          entry
       }
     }
 
-  def isWon(marked: List[List[Int]]): Boolean = {
-    val rowWon = (for {
-      row <- marked
-    } yield if (row.sum == 5) true else false).exists(identity)
-
-    val colWon = (for {
-      row <- marked.transpose
-    } yield if (row.sum == 5) true else false).exists(identity)
-
+  def isWon(board: List[List[Entry]]): Boolean = {
+    val rowWon = (for { row <- board } yield row.map(_.isDrawn).forall(identity)).exists(identity)
+    val colWon = (for { col <- board.transpose } yield col.map(_.isDrawn).forall(identity)).exists(identity)
     rowWon || colWon
   }
 
-  def getScore(drawnNumber: Int, board: List[List[Int]], marked: List[List[Int]]): Int =
-    if (isWon(marked)) {
-      val unmarkedSum = board.zipWithIndex.map { case (row, r) =>
-        row.zipWithIndex.map { case (element, c) =>
-          if (marked(r)(c) == 0) element else 0
-        }.sum
-      }.sum
+  def getScore(drawnNumber: Int, board: List[List[Entry]]): Int =
+    if (isWon(board))
+      board.map(row => row.map(entry => if (!entry.isDrawn) entry.value else 0).sum).sum * drawnNumber
+    else
+      throw new IllegalArgumentException("Board is not in won state")
 
-      unmarkedSum * drawnNumber
-
-    } else
-      throw new IllegalArgumentException("Board is not in winning state")
-
-  def playBingo(boards: Seq[List[List[Int]]], numbers: List[Int]): Int = {
-
+  def getScoreForFirstWinningBoard(boards: Seq[List[List[Entry]]], numbers: List[Int]): Int = {
     @tailrec
-    def helper(remainingNumbers: List[Int], marked: Seq[List[List[Int]]]): Int =
+    def helper(remainingNumbers: List[Int], boards: Seq[List[List[Entry]]]): Int =
       if (remainingNumbers.isEmpty)
         0
       else {
         val currentDrawn = remainingNumbers.head
-        val newMarked = for ((b, boardIndex) <- boards.zipWithIndex) yield {
-          val m = marked(boardIndex)
-          markBoard(currentDrawn, b, m)
-        }
+        val newBoards    = for (b <- boards) yield markEntries(currentDrawn, b)
 
-        if (newMarked.exists(isWon)) {
-          newMarked.zipWithIndex.collect {
-            case (m, mIndex) if isWon(m) => getScore(currentDrawn, boards(mIndex), m)
-          }.head
-        } else
-          helper(remainingNumbers.tail, newMarked)
+        if (newBoards.exists(isWon))
+          newBoards.collect { case b if (isWon(b)) => getScore(currentDrawn, b) }.head
+        else
+          helper(remainingNumbers.tail, newBoards)
       }
 
-    val startingBoards = for { _ <- 1 to boards.size } yield unmarkedBoard
-
-    helper(numbers, startingBoards)
+    helper(numbers, boards)
   }
 
-  def playBingoWinLast(boards: Seq[List[List[Int]]], numbers: List[Int]): Int = {
+  def getScoreForLastWinningBoard(boards: Seq[List[List[Entry]]], numbers: List[Int]): Int = {
 
     @tailrec
-    def helper(
-        boards: Seq[List[List[Int]]],
-        remainingNumbers: List[Int],
-        marked: Seq[List[List[Int]]]
-    ): (Int, List[List[Int]], List[List[Int]]) = {
+    def helper(remainingNumbers: List[Int], remainingBoards: Seq[List[List[Entry]]]): (Int, List[List[Entry]]) = {
       val currentDrawn = remainingNumbers.head
-      val newMarked = for ((b, boardIndex) <- boards.zipWithIndex) yield {
-        val m = marked(boardIndex)
-        markBoard(currentDrawn, b, m)
-      }
-      if (newMarked.exists(isWon)) {
-        val newBoards = boards.filterNot(isWon)
-        if (newBoards.size == 1) {
-          (currentDrawn, newBoards.head, newMarked.head)
-        } else {
-          val wonIndexes      = newMarked.zipWithIndex.filter { case (m, _) => isWon(m) }.map(_._2).toSet
-          val remainingBoards = boards.zipWithIndex.filter { case (_, i) => !wonIndexes.contains(i) }.map(_._1)
-          val remainingMarked = newMarked.zipWithIndex.filter { case (_, i) => !wonIndexes.contains(i) }.map(_._1)
-          helper(remainingBoards, remainingNumbers.tail, remainingMarked)
+      val newBoards    = for (b <- remainingBoards) yield markEntries(currentDrawn, b)
+
+      if (newBoards.exists(isWon)) {
+        val notWonBoards = newBoards.filterNot(isWon)
+        if (notWonBoards.isEmpty)
+          (currentDrawn, newBoards.head)
+        else {
+          helper(remainingNumbers.tail, notWonBoards)
         }
       } else
-        helper(boards, remainingNumbers.tail, newMarked)
+        helper(remainingNumbers.tail, newBoards)
     }
 
-    val startingBoards                      = for { _ <- 1 to boards.size } yield unmarkedBoard
-    val (lastNumber, lastBoard, lastMarked) = helper(boards, numbers, startingBoards)
-    getScore(lastNumber, lastBoard, lastMarked)
+    val (lastNumber, lastBoard) = helper(numbers, boards)
+    getScore(lastNumber, lastBoard)
   }
-
 }

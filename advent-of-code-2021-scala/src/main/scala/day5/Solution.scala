@@ -35,17 +35,21 @@ object Solution {
 
   def getDiagonalPoints(input: List[Segment]): List[Point] = {
     val points = filterDiagonalSegments(input).map { segment =>
+      val left  = List(segment.p1, segment.p2).filter(_.x == (segment.p1.x min segment.p2.x)).head
+      val right = List(segment.p1, segment.p2).filter(_.x == (segment.p1.x max segment.p2.x)).head
+      val deltaY = (left.y, right.y) match {
+        case (y1, y2) if y1 > y2 => -1
+        case (y1, y2) if y1 < y2 => 1
+        case _                   => 0
+      }
+
       for {
-        x <- (segment.p1.x min segment.p2.x) to (segment.p1.x max segment.p2.x)
-        y <- (segment.p1.y min segment.p2.y) to (segment.p1.y max segment.p2.y)
+        x <- left.x to right.x
       } yield {
-        if ((x - segment.p1.x).abs == (y - segment.p1.y).abs) // gradient can only be 1 or -1
-          Some(Point(x, y))
-        else
-          None
+        Point(x, left.y + deltaY * (x - left.x))
       }
     }
-    points.flatten.flatten
+    points.flatten
   }
 
   def getSumOfHorizontalVerticalDiagonalIntersections(input: List[Segment]): Int = {

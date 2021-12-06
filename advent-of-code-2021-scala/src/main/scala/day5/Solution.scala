@@ -3,7 +3,10 @@ package day5
 object Solution {
 
   case class Point(x: Int, y: Int)
-  case class Segment(p1: Point, p2: Point)
+  case class Segment(p1: Point, p2: Point) {
+    val left  = if (p1.x < p2.x) p1 else p2
+    val right = if (p1.x > p2.x) p1 else p2
+  }
 
   def parseSegment(line: String): Segment =
     line match {
@@ -35,18 +38,16 @@ object Solution {
 
   def getDiagonalPoints(input: List[Segment]): List[Point] = {
     val points = filterDiagonalSegments(input).map { segment =>
-      val left  = List(segment.p1, segment.p2).filter(_.x == (segment.p1.x min segment.p2.x)).head
-      val right = List(segment.p1, segment.p2).filter(_.x == (segment.p1.x max segment.p2.x)).head
-      val deltaY = (left.y, right.y) match {
+      val deltaY = (segment.left.y, segment.right.y) match {
         case (y1, y2) if y1 > y2 => -1
         case (y1, y2) if y1 < y2 => 1
         case _                   => 0
       }
 
       for {
-        x <- left.x to right.x
+        x <- segment.left.x to segment.right.x
       } yield {
-        Point(x, left.y + deltaY * (x - left.x))
+        Point(x, segment.left.y + deltaY * (x - segment.left.x))
       }
     }
     points.flatten

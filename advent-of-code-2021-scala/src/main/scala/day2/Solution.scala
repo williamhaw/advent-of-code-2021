@@ -11,10 +11,10 @@ object Solution {
   case class Up(units: Int)      extends Command
 
   def parseCommand(line: String): Command = {
-    line.split(" ") match {
-      case Array("forward", u) => Forward(u.toInt)
-      case Array("up", u)      => Up(u.toInt)
-      case Array("down", u)    => Down(u.toInt)
+    line match {
+      case s"forward $u" => Forward(u.toInt)
+      case s"up $u"      => Up(u.toInt)
+      case s"down $u"    => Down(u.toInt)
     }
   }
 
@@ -27,10 +27,13 @@ object Solution {
       }
     )
 
-    def findPositionWithAim(commands: List[Command]): PositionDepthAim =
-        commands.foldLeft(PositionDepthAim(0,0,0))((current: PositionDepthAim, c: Command) => c match {
-            case Forward(units) => current.copy(horizontal = current.horizontal + units, depth = current.depth + current.aim * units)
-            case Down(units) => current.copy(aim = current.aim + units)
-            case Up(units) => current.copy(aim = current.aim - units)
-        })
+  def findPositionWithAim(commands: List[Command]): PositionDepthAim =
+    commands.foldLeft(PositionDepthAim(0, 0, 0))((current: PositionDepthAim, c: Command) =>
+      c match {
+        case Forward(units) =>
+          current.copy(horizontal = current.horizontal + units, depth = current.depth + current.aim * units)
+        case Down(units) => current.copy(aim = current.aim + units)
+        case Up(units)   => current.copy(aim = current.aim - units)
+      }
+    )
 }

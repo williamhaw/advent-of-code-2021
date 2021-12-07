@@ -15,6 +15,15 @@ object SolutionSpec extends DefaultRunnableSpec {
       for {
         input <- ZFileReader.readLines("day-7-input-william.txt")(parse).head
       } yield assert(getLowestTotalFuelCost(input))(equalTo(357353))
+    },
+    test("getLowestTotalFuelCostArithmeticProgression should get the lowest cost for the test input") {
+      val testInput = "16,1,2,0,4,2,7,1,2,14"
+      assert(getLowestTotalFuelCostArithmeticProgression(parse(testInput)))(equalTo(168))
+    },
+    test("getLowestTotalFuelCostArithmeticProgression should get the lowest cost for the real input") {
+      for {
+        input <- ZFileReader.readLines("day-7-input-william.txt")(parse).head
+      } yield assert(getLowestTotalFuelCostArithmeticProgression(input))(equalTo(104822130))
     }
   )
 }

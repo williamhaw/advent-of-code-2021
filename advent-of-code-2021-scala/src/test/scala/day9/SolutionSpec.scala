@@ -30,6 +30,21 @@ object SolutionSpec extends DefaultRunnableSpec {
           )
         )
       )
-    }
+    },
+    test("getBasinSize should return correct basin size for test input") {
+      for {
+        input <- ZFileReader.readLines("day9-test-input.txt")(parse)
+      } yield assert(getBasinSize(processInput(input), (1,2)))(equalTo(3))
+    },
+    test("getThreeLargestBasinSizes should return correct product of basin sizes for test input") {
+      for {
+        input <- ZFileReader.readLines("day9-test-input.txt")(parse)
+      } yield assert(getThreeLargestBasinSizes(processInput(input)))(equalTo(1134))
+    },
+    test("getThreeLargestBasinSizes should return correct product of basin sizes for real input") {
+      for {
+        input <- ZFileReader.readLines("day-9-input-william.txt")(parse)
+      } yield assert(getThreeLargestBasinSizes(processInput(input)))(equalTo(1069200))
+    },
   )
 }

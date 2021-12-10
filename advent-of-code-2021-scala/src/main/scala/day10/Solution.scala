@@ -13,6 +13,13 @@ object Solution {
     '>' -> 25137
   )
 
+  val incompletePoints = Map(
+    ')' -> 1,
+    ']' -> 2,
+    '}' -> 3,
+    '>' -> 4
+  )
+
   val openBrackets               = Set('(', '[', '{', '<')
   val correspondingOpenBrackets  = Map(')' -> '(', ']' -> '[', '}' -> '{', '>' -> '<')
   val correspondingCloseBrackets = Map('(' -> ')', '[' -> ']', '{' -> '}', '<' -> '>')
@@ -35,4 +42,28 @@ object Solution {
   def getErrorScore(input: Seq[String]): Int =
     input.map(getErrorCharacter).map(_.fold(0)(points)).sum
 
+  def getIncomplete(input: Seq[String]): Seq[Seq[Char]] =
+    input
+      .map(line => findError(line, List()))
+      .collect {
+        case (error, stack) if error.isEmpty => stack
+      }
+
+  def getCompletionStrings(input: Seq[String]): Seq[Seq[Char]] =
+    getIncomplete(input).map(_.map(correspondingCloseBrackets))
+
+  def getCompletionScore(input: Seq[Char]): Long = {
+    @tailrec
+    def helper(total: Long, remainingChar: Seq[Char]): Long =
+      if (remainingChar.isEmpty)
+        total
+      else
+        helper(total * 5 + incompletePoints(remainingChar.head), remainingChar.tail)
+    helper(0, input)
+  }
+
+  def getMiddleCompletionScore(input: Seq[String]): Long = {
+    val sortedScores = getCompletionStrings(input).map(getCompletionScore).sorted
+    sortedScores(sortedScores.length / 2)
+  }
 }

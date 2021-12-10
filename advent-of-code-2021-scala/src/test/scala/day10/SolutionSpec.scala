@@ -23,6 +23,23 @@ object SolutionSpec extends DefaultRunnableSpec {
       for {
         input <- ZFileReader.readLines("day-10-input-william.txt")(parse)
       } yield assert(getErrorScore(input))(equalTo(268845))
+    },
+    test("getCompletionScore should return correct completionScore") {
+      assert(getCompletionScore("}}]])})]".toSeq))(equalTo(288957L)) &&
+      assert(getCompletionScore(")}>]})".toSeq))(equalTo(5566L)) &&
+      assert(getCompletionScore("}}>}>))))".toSeq))(equalTo(1480781L)) &&
+      assert(getCompletionScore("]]}}]}]}>".toSeq))(equalTo(995444L)) &&
+      assert(getCompletionScore("])}>".toSeq))(equalTo(294L))
+    },
+    test("getMiddleCompletionScore should return correct score for test input"){
+      for {
+        input <- ZFileReader.readLines("day10-test-input.txt")(parse)
+      } yield assert(getMiddleCompletionScore(input))(equalTo(288957L))
+    },
+    test("getMiddleCompletionScore should return correct score for real input") {
+      for {
+        input <- ZFileReader.readLines("day-10-input-william.txt")(parse)
+      } yield assert(getMiddleCompletionScore(input))(equalTo(4038824534L))
     }
   )
 }

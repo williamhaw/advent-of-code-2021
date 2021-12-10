@@ -13,29 +13,23 @@ object Solution {
     '>' -> 25137
   )
 
-  val openBrackets = Set('(', '[', '{', '<')
-  val correspondingBrackets = Map(
-    ')' -> '(',
-    ']' -> '[',
-    '}' -> '{',
-    '>' -> '<'
-  )
+  val openBrackets               = Set('(', '[', '{', '<')
+  val correspondingOpenBrackets  = Map(')' -> '(', ']' -> '[', '}' -> '{', '>' -> '<')
+  val correspondingCloseBrackets = Map('(' -> ')', '[' -> ']', '{' -> '}', '<' -> '>')
 
-  def getErrorCharacter(line: String): Option[Char] = {
+  def getErrorCharacter(line: String): Option[Char] =
+    findError(line, List())._1
 
-    @tailrec
-    def helper(remaining: String, stack: Seq[Char]): Option[Char] = {
-      if (remaining.isEmpty)
-        None
-      else if (openBrackets.contains(remaining.head))
-        helper(remaining.tail, stack.prepended(remaining.head))
-      else if (correspondingBrackets(remaining.head) == stack.head)
-        helper(remaining.tail, stack.tail)
-      else
-        Some(remaining.head)
-    }
-    val ret = helper(line, List())
-    ret
+  @tailrec
+  def findError(remaining: String, stack: Seq[Char]): (Option[Char], Seq[Char]) = {
+    if (remaining.isEmpty)
+      (None, stack)
+    else if (openBrackets.contains(remaining.head))
+      findError(remaining.tail, stack.prepended(remaining.head))
+    else if (correspondingOpenBrackets(remaining.head) == stack.head)
+      findError(remaining.tail, stack.tail)
+    else
+      (Some(remaining.head), stack)
   }
 
   def getErrorScore(input: Seq[String]): Int =

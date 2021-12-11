@@ -12,3 +12,4 @@
 | 8   | [Solution](src/main/scala/day8/Solution.scala)  | [Tests](src/test/scala/day8/SolutionSpec.scala)  |
 | 9   | [Solution](src/main/scala/day9/Solution.scala)  | [Tests](src/test/scala/day9/SolutionSpec.scala)  |
 | 10  | [Solution](src/main/scala/day10/Solution.scala) | [Tests](src/test/scala/day10/SolutionSpec.scala) |
+| 11  | [Solution](src/main/scala/day11/Solution.scala) | [Tests](src/test/scala/day11/SolutionSpec.scala) |

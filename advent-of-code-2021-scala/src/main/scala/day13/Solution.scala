@@ -21,4 +21,23 @@ object Solution {
     }
   }.distinct
 
+  def performFolds(points: Seq[Point], folds: Seq[Fold]): Seq[Point] =
+    folds.foldLeft(points)((currentPoints, f) => performFold(currentPoints, f))
+
+  def showPoints(points: Seq[Point]): Seq[Seq[String]] = {
+    val maxX     = points.map(_.x).max
+    val maxY     = points.map(_.y).max
+    val pointSet = points.toSet
+
+    for {
+      c <- 0 to maxY
+    } yield {
+      for {
+        r <- 0 to maxX
+      } yield {
+        if (pointSet.contains(Point(r, c))) "#" else "."
+      }
+    }
+  }
+
 }

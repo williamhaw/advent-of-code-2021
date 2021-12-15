@@ -12,6 +12,7 @@ object Solution {
 
     val directions = Seq((-1, 0), (0, -1), (1, 0), (0, 1))
 
+    @tailrec
     def helper(risks: Map[(Int, Int), Int], queue: Seq[(Int, Int)]): Map[(Int, Int), Int] =
       if (queue.isEmpty)
         risks
@@ -33,6 +34,17 @@ object Solution {
       }
 
     helper(Map(start -> 0), Seq(start))(end)
+  }
+
+  def expand(input: Seq[Seq[Int]]): Seq[Seq[Int]] = {
+    val end             = (input.size - 1, input(0).size - 1)
+    val (width, height) = (input.size, input(0).size)
+
+    Seq.tabulate(width * 5, height * 5) { case (absRow, absCol) =>
+      val (inputRow, inputCol) = (absRow % width, absCol % height)
+      val (tileRow, tileCol)   = (absRow / width, absCol / height)
+      1 + (input(inputRow)(inputCol) - 1 + tileRow + tileCol) % 9
+    }
   }
 
 }

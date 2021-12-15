@@ -16,6 +16,16 @@ object SolutionSpec extends DefaultRunnableSpec {
       for {
         rawInput <- ZFileReader.readLines("day-15-input-william.txt")(parse)
       } yield assert(getLowestRisk(rawInput))(equalTo(441))
+    },
+    test("getLowestRisk should return lowest total risk for expanded test input") {
+      for {
+        rawInput <- ZFileReader.readLines("day15-test-input.txt")(parse)
+      } yield assert(getLowestRisk(expand(rawInput)))(equalTo(315))
+    },
+    test("getLowestRisk should return lowest total risk for expanded real input") {
+      for {
+        rawInput <- ZFileReader.readLines("day-15-input-william.txt")(parse)
+      } yield assert(getLowestRisk(expand(rawInput)))(equalTo(2849))
     }
   )
 }

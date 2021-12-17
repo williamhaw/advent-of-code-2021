@@ -64,4 +64,13 @@ object Solution {
     candidates.filter(_._2 == true).maxBy(_._1.y)._1.y
   }
 
+  def getCountOfVelocitiesHit(target: Target): Int = {
+    val candidates = for {
+      vX <- 0 to target.right
+      vY <-
+        (-target.top min target.top min target.bottom min -target.bottom) to (-target.top max target.top max target.bottom max -target.bottom)
+    } yield simulateHighestY(Position(0, 0), Velocity(vX, vY), target)
+    candidates.filter(_._2 == true).size
+  }
+
 }

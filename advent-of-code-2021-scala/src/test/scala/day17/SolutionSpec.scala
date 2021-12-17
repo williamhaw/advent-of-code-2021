@@ -33,6 +33,15 @@ object SolutionSpec extends DefaultRunnableSpec {
       for {
         target <- ZFileReader.readLines("day-17-input-william.txt")(parse).head
       } yield assert(searchHighestY(target))(equalTo(4950))
+    },
+    test("getCountOfVelocitiesHit should return count of hits for test input") {
+      val target = "target area: x=20..30, y=-10..-5"
+      assert(getCountOfVelocitiesHit(parse(target)))(equalTo(112))
+    },
+    test("getCountOfVelocitiesHit should return count of hits for real input") {
+      for {
+        target <- ZFileReader.readLines("day-17-input-william.txt")(parse).head
+      } yield assert(getCountOfVelocitiesHit(target))(equalTo(1477))
     }
   )
 }

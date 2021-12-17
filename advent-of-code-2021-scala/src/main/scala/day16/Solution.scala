@@ -1,5 +1,7 @@
 package day16
 
+import java.math.BigInteger
+
 object Solution {
 
   sealed trait Packet {
@@ -32,12 +34,16 @@ object Solution {
         val digitBits = transmission.slice(6, transmission.size)
         var stop      = digitBits.head
         var cursor    = 0
+        var valueBits = new StringBuilder()
         while (stop == '1') {
+          valueBits.append(digitBits.slice(cursor + 1, cursor + 5))
           cursor += 5
           stop = digitBits(cursor)
         }
+        valueBits.append(digitBits.slice(cursor + 1, cursor + 5))
         cursor += 5
-        Literal(version, 0L, cursor + 6)
+        val value = new BigInteger(valueBits.toString(), 2).longValue()
+        Literal(version, value, cursor + 6)
       } else {
         val lengthTypeId = Integer.parseInt(transmission.slice(6, 7), 2)
         if (lengthTypeId == 0) {
@@ -103,6 +109,20 @@ object Solution {
       case Operator(version, _, _, _, subPackets) => version + subPackets.map(helper).sum
     }
     helper(packet)
+  }
+
+  def eval(packet: Packet): Long = packet match {
+    case Literal(_, value, _) => value
+    case Operator(_, packetTypeId, _, _, subPackets) =>
+      packetTypeId match {
+        case 0 => subPackets.map(eval).sum
+        case 1 => subPackets.map(eval).product
+        case 2 => subPackets.map(eval).min
+        case 3 => subPackets.map(eval).max
+        case 5 => if (eval(subPackets(0)) > eval(subPackets(1))) 1 else 0
+        case 6 => if (eval(subPackets(0)) < eval(subPackets(1))) 1 else 0
+        case 7 => if (eval(subPackets(0)) == eval(subPackets(1))) 1 else 0
+      }
   }
 
 }

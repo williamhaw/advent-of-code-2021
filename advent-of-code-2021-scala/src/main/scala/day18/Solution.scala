@@ -74,4 +74,9 @@ object Solution extends RegexParsers {
 
   def sum(numbers: Seq[SnailfishNumber]): SnailfishNumber = numbers.reduce(_ + _)
 
+  def largestMagnitudeSumOfTwo(numbers: Seq[SnailfishNumber]): Int =
+    (for {
+      i <- numbers.indices
+      j <- numbers.indices
+    } yield (numbers(i) + numbers(j)).magnitude).max
 }

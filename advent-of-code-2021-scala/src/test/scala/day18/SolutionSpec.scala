@@ -305,6 +305,16 @@ object SolutionSpec extends DefaultRunnableSpec {
       for {
         input <- ZFileReader.readLines("day-18-input-william.txt")(parse)
       } yield assert(sum(input).magnitude)(equalTo(4347))
-    }
+    },
+    test("largestMagnitudeSumOfTwo should return correct result for test input") {
+      for {
+        input <- ZFileReader.readLines("day18-test-input-2.txt")(parse)
+      } yield assert(largestMagnitudeSumOfTwo(input))(equalTo(3993))
+    },
+    test("largestMagnitudeSumOfTwo should return correct result for real input") {
+      for {
+        input <- ZFileReader.readLines("day-18-input-william.txt")(parse)
+      } yield assert(largestMagnitudeSumOfTwo(input))(equalTo(4721))
+    },
   )
 }

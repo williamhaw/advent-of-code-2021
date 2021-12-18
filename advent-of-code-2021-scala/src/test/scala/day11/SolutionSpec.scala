@@ -92,7 +92,16 @@ object SolutionSpec extends DefaultRunnableSpec {
       for {
         input <- ZFileReader.readLines("day-11-input-william.txt")(parse)
       } yield assert(stepNTotalFlashes(100, input, 0))(equalTo(1591))
+    },
+    test("stepSynchronized should return step where all octopuses flash from test input") {
+      for {
+        input <- ZFileReader.readLines("day11-test-input.txt")(parse)
+      } yield assert(stepSynchronized(input))(equalTo(195))
+    },
+    test("stepSynchronized should return step where all octopuses flash from real input") {
+      for {
+        input <- ZFileReader.readLines("day-11-input-william.txt")(parse)
+      } yield assert(stepSynchronized(input))(equalTo(314))
     }
   )
-
 }

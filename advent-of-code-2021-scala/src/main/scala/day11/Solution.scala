@@ -58,4 +58,13 @@ object Solution {
     } else
       count
 
+  def stepSynchronized(grid: Seq[Seq[Int]]): Int = {
+    @tailrec
+    def helper(n: Int, grid: Seq[Seq[Int]]): Int =
+      if (grid.forall(_.forall(_ == 0)))
+        n
+      else
+        helper(n + 1, step(grid))
+    helper(0, grid)
+  }
 }

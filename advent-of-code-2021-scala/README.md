@@ -22,5 +22,5 @@
 
 
 ## Notes/Improvements
-- Day 15 part 2 solution currently take ~2mins to run.
+- Day 15 part 2 solution currently takes ~2mins to run.
 - Day 16 solution could be a lot more elegant with some kind of nested streams or iterators.

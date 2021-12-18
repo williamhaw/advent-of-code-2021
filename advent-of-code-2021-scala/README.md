@@ -19,3 +19,8 @@
 | [15](https://adventofcode.com/2021/day/15) | [Solution](src/main/scala/day15/Solution.scala) | [Tests](src/test/scala/day15/SolutionSpec.scala) |
 | [16](https://adventofcode.com/2021/day/16) | [Solution](src/main/scala/day16/Solution.scala) | [Tests](src/test/scala/day16/SolutionSpec.scala) |
 | [17](https://adventofcode.com/2021/day/17) | [Solution](src/main/scala/day17/Solution.scala) | [Tests](src/test/scala/day17/SolutionSpec.scala) |
+
+
+## Notes/Improvements
+- Day 15 part 2 solution currently take ~2mins to run.
+- Day 16 solution could be a lot more elegant with some kind of nested streams or iterators.

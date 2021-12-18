@@ -19,6 +19,7 @@
 | [15](https://adventofcode.com/2021/day/15) | [Solution](src/main/scala/day15/Solution.scala) | [Tests](src/test/scala/day15/SolutionSpec.scala) |
 | [16](https://adventofcode.com/2021/day/16) | [Solution](src/main/scala/day16/Solution.scala) | [Tests](src/test/scala/day16/SolutionSpec.scala) |
 | [17](https://adventofcode.com/2021/day/17) | [Solution](src/main/scala/day17/Solution.scala) | [Tests](src/test/scala/day17/SolutionSpec.scala) |
+| [18](https://adventofcode.com/2021/day/18) | [Solution](src/main/scala/day18/Solution.scala) | [Tests](src/test/scala/day18/SolutionSpec.scala) |
 
 
 ## Notes/Improvements
